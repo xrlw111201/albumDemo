@@ -21,6 +21,7 @@ void AlbumTest::getAlbum(AlbumTestDelegate* _delegate){
     jobject obj;
     jobjectArray strArray;
     JniMethodInfo minfo;
+
     bool b = JniHelper::getStaticMethodInfo(minfo, "org/cocos2dx/cpp/AppActivity", "getImages", "()[Ljava/lang/String;");
     
     if(b){
@@ -41,7 +42,7 @@ void AlbumTest::getAlbum(AlbumTestDelegate* _delegate){
             
             minfo.env->DeleteLocalRef(jstr);    //务必释放
             
-            if("error" != strPath){
+            if("" != strPath){
                 Global::g_vector.push_back(strPath);
             }
         }

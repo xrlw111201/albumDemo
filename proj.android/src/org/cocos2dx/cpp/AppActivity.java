@@ -26,7 +26,51 @@ THE SOFTWARE.
 ****************************************************************************/
 package org.cocos2dx.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.cocos2dx.lib.Cocos2dxActivity;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
 
 public class AppActivity extends Cocos2dxActivity {
+	
+	private static AppActivity appActivity = null;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		
+		super.onCreate(savedInstanceState);
+
+		appActivity = this;
+	}
+
+	public static String[] getImages() {
+		
+		List<String> list = new ArrayList<String>();
+		
+		Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+		ContentResolver mContentResolver = AppActivity.appActivity.getContentResolver();
+		
+		//只查询jpeg和png图片
+		Cursor mCursor = mContentResolver.query(mImageUri, null,
+				MediaStore.Images.Media.MIME_TYPE + "=? or "
+						+ MediaStore.Images.Media.MIME_TYPE + "=?",
+				new String[] { "image/jpeg", "image/png" }, MediaStore.Images.Media.DATE_MODIFIED);
+		
+		while (mCursor.moveToNext()) {
+			
+			//获取图片路径
+			String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.DATA));
+			list.add(path);
+		}
+		mCursor.close();
+		
+		String[] strArray = new String[list.size()];
+		list.toArray(strArray);
+		
+		return strArray;
+	}
 }
